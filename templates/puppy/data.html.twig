@@ -1,0 +1,9 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Puppy index{% endblock %}
+
+{% block body %}
+       {% for puppy in data %}
+              <span>{{ puppy }}</span>
+       {% endfor %}
+{% endblock %}
