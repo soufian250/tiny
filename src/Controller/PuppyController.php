@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Puppy;
 use App\Form\PuppyType;
 use App\Repository\PuppyRepository;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,58 +17,53 @@ use PhpOffice\PhpSpreadsheet\Reader\Xlsx as ReaderXlsx;
 
 
 /**
- * @Route("/puppy")
+ * @Route("/tiny")
  */
 class PuppyController extends AbstractController
 {
-    /**
-     * @Route("/", name="app_puppy_index", methods={"GET"})
-     */
-    public function index(PuppyRepository $puppyRepository)
-    {
-        return $this->render('puppy/index.html.twig', [
-            'puppies' => $puppyRepository->findAll(),
-        ]);
-    }
-
 
     /**
-     * @Route("/import", name="app_puppy_import", methods={"GET"})
+     * @Route("/compress", name="compress", methods={"GET"})
      */
-    public function import(PuppyRepository $puppyRepository )
+    public function compress()
     {
 
-        $path = $this->getParameter('brochures_directory');
-        $i = 0;
-        if (is_dir($path)) {
-            $files = array();
-            foreach (scandir($path) as $key => $file) {
-                $i++;
+        $executionStartTime = microtime(true);
+        $images_directory = $this->getParameter('images_directory');
+
+        if (is_dir($images_directory)) {
+            foreach (scandir($images_directory) as $file) {
                 if ($file !== '.' && $file !== '..') {
+
+                    //TODO: Wrap this code in Exception handler
                     \Tinify\setKey("GWdhK6Ng41yphqynJCrdTC1431bnYjXF");
-                     $source = \Tinify\fromFile($path.'/'.$file);
-                     $source->toFile($file);
+                    $source = \Tinify\fromFile($images_directory.'/'.$file);
+                    $source->toFile('CompresedImages/'.$file);
+
                 }
             }
         }
 
-        dump('OK');die;
+        $executionEndTime = microtime(true);
+        $seconds = $executionEndTime - $executionStartTime;
+
+        return new Response("Images compressed successfully in $seconds");
 
     }
 
     /**
-     * @Route("/filedata", name="get_data_from_spreadsheet", methods={"GET"})
+     * @Route("/getImages", name="get_data_from_spreadsheet", methods={"GET"})
      */
     public function getInfoFromSpreedSheet()
     {
 
         $filename = $this->getParameter('list_images_excel');
-        $downloadedImagesFolder =  $this->getParameter('downloaded_images');
+
         if (!file_exists($filename)) {
             throw new \Exception('File does not exist');
         }
 
-
+        $executionStartTime = microtime(true);
         $spreadsheet = $this->readFile($filename);
         $data = $this->createDataFromSpreadsheet($spreadsheet);
 
@@ -83,79 +79,12 @@ class PuppyController extends AbstractController
             }
         }
 
-
-
-        return $this->render('puppy/data.html.twig', [
-            'data' => $data,
-        ]);
-
+        $executionEndTime = microtime(true);
+        $seconds = $executionEndTime - $executionStartTime;
+         return new Response("Images downloaded successfully in $seconds");
 
     }
 
-
-
-    /**
-     * @Route("/new", name="app_puppy_new", methods={"GET", "POST"})
-     */
-    public function new(Request $request, PuppyRepository $puppyRepository)
-    {
-        $puppy = new Puppy();
-        $form = $this->createForm(PuppyType::class, $puppy);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $puppyRepository->add($puppy, true);
-
-            return $this->redirectToRoute('app_puppy_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->renderForm('puppy/new.html.twig', [
-            'puppy' => $puppy,
-            'form' => $form,
-        ]);
-    }
-
-    /**
-     * @Route("/{id}", name="app_puppy_show", methods={"GET"})
-     */
-    public function show(Puppy $puppy)
-    {
-        return $this->render('puppy/show.html.twig', [
-            'puppy' => $puppy,
-        ]);
-    }
-
-    /**
-     * @Route("/{id}/edit", name="app_puppy_edit", methods={"GET", "POST"})
-     */
-    public function edit(Request $request, Puppy $puppy, PuppyRepository $puppyRepository)
-    {
-        $form = $this->createForm(PuppyType::class, $puppy);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $puppyRepository->add($puppy, true);
-
-            return $this->redirectToRoute('app_puppy_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->renderForm('puppy/edit.html.twig', [
-            'puppy' => $puppy,
-            'form' => $form,
-        ]);
-    }
-
-    /**
-     * @Route("/{id}", name="app_puppy_delete", methods={"POST"})
-     */
-    public function delete(Request $request, Puppy $puppy, PuppyRepository $puppyRepository)
-    {
-        if ($this->isCsrfTokenValid('delete'.$puppy->getId(), $request->request->get('_token'))) {
-            $puppyRepository->remove($puppy, true);
-        }
-
-        return $this->redirectToRoute('app_puppy_index', [], Response::HTTP_SEE_OTHER);
-    }
 
     protected function readFile($filename)
     {
