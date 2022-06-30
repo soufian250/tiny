@@ -25,7 +25,8 @@
         "symfony/validator": "5.4.*",
         "symfony/web-server-bundle": "4.4",
         "symfony/yaml": "5.4.*",
-        "tinify/tinify": "^1.5"
+        "tinify/tinify": "^1.5",
+        "ext-gd": "*"
     },
     "config": {
         "allow-plugins": {

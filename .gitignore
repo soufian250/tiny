@@ -11,7 +11,7 @@
 /public/downloadedImages
 /public/images
 /public/*.png
-/public/ImageListExcel
+/public/imageListExcel
 ###< symfony/framework-bundle ###
 
 ###> symfony/web-server-bundle ###
