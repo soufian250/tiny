@@ -4,10 +4,10 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
-    images_directory: '%kernel.project_dir%/public/downloadedImages/democompressed.jpg'
+    images_directory: '%kernel.project_dir%/public/downloadedImages'
     list_images_excel: '%kernel.project_dir%/public/imageListExcel/ImagesGT100.xlsx'
     downloaded_images: '%kernel.project_dir%/public/downloaded_images'
-    images_directory_source: '%kernel.project_dir%/public/downloadedImages/demo.jpg'
+    images_directory_source: '%kernel.project_dir%/public/downloadedImages/demo.png'
 services:
     # default configuration for services in *this* file
     _defaults:

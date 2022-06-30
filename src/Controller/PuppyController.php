@@ -117,7 +117,6 @@ class PuppyController extends AbstractController
                 $writer->save('php://output');
             });
 
-
             return $response;
 
         }
@@ -132,9 +131,13 @@ class PuppyController extends AbstractController
             $destination_url = $this->getParameter('images_directory');
             $source_img = $this->getParameter('images_directory_source');
 
+            for ($i=1;$i<=10;$i++){
+                $quality =$i*10;
+                $this->compressImage($source_img, $destination_url.'/democompressed'.$quality.'.png',$quality );
+            }
 
-            $this->compressImage($source_img, $destination_url, 30);
-            $error = "Image Compressed successfully";
+
+            $error = "Image Compressed successfully quality";
 
             dump($error);die;
 
@@ -262,7 +265,7 @@ class PuppyController extends AbstractController
             $image = imagecreatefrompng($source);
 
         if(isset($image))
-            imagejpeg($image, $destination, 50);
+            imagejpeg($image, $destination, $quality);
 
         return $destination;
 
