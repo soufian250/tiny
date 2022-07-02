@@ -5,7 +5,7 @@
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
     images_directory: '%kernel.project_dir%/public/downloadedImages/democompressed.jpg'
-    list_images_excel: '%kernel.project_dir%/public/imageListExcel/ImagesGT100.xlsx'
+    list_images_excel: '%kernel.project_dir%/public/imageListExcel/Images200_after_500.xlsx'
     downloaded_images: '%kernel.project_dir%/public/downloaded_images'
     images_directory_source: '%kernel.project_dir%/public/downloadedImages/demo.jpg'
 services:

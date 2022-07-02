@@ -59,7 +59,7 @@ class PuppyController extends AbstractController
     }
 
     /**
-     * @Route("/getImages", name="get_data_from_spreadsheet", methods={"GET"})
+     * @Route("/download", name="download", methods={"GET"})
      */
     public function getInfoFromSpreedSheet()
     {
